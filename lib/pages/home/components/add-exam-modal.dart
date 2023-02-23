@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../dtos/examDto.dart';
@@ -28,8 +29,11 @@ class _AddExamModalState extends State<AddExamModal> {
     if(form != null && form.validate())
     {
       form.save();
-      
+
+      var currentUserEmail = FirebaseAuth.instance.currentUser?.email;
+
       await FirebaseFirestore.instance.collection('events').add({
+        'userEmail': currentUserEmail ?? '',
         'name': subjectName,
         'description': 'exam',
         'date': DateTime(date.year, date.month, date.day, time.hour, time.minute)
