@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   ItemType? selectedMenu;
-
+  int y  = 1;
   List<String> documents = [];
 
   void _addNewExam(exam) {
@@ -26,16 +26,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _deleteSubject(int idx) {
-    // if (idx < exams.length) {
-    //   setState(() {
-    //     exams.removeAt(idx);
-    //   });
-    // }
+  void refresh()
+  {
+    setState(() {
+      y = y + 1;
+    });
   }
 
-  Future getExamEvents() async {
-
+  void _deleteExamAppointment(String examId) {
+    var doc = FirebaseFirestore.instance.collection('events').doc(examId);
+    doc.delete();
+    refresh();
   }
 
   Future getDocuments() async {
@@ -63,12 +64,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-    // @override
-    // void initState(){
-    //   // getExamEvents();
-    //   super.initState();
-    // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,16 +83,10 @@ class _HomePageState extends State<HomePage> {
               return ListView.builder(
                   itemCount: documents.length,
                   itemBuilder: (context, index){
-                return CardComponent(documents[index]);
+                return CardComponent(documents[index], _deleteExamAppointment);
               });
             },
           ),
-          // child: Column(
-          //   crossAxisAlignment: CrossAxisAlignment.stretch,
-          //   children: [
-          //     ...documents.asMap().entries.map((e) => CardComponent(e.value)).toList()
-          //   ],
-          // ),
         ),
       ),
     );
